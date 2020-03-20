@@ -31,5 +31,11 @@ def graph_raw():
     mpl_pyplot.grid(True)
     mpl_pyplot.show()
 
+def percent_change(start, current):
+    """
+    DOCSTRING
+    """
+    return ((current-start)/start)*100.00
+
 if __name__ == '__main__':
     graph_raw()

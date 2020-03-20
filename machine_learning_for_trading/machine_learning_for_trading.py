@@ -21,7 +21,13 @@ def graph_raw():
     axis_1 = mpl_pyplot.subplot2grid((40, 40), (0, 0), rowspan=40, colspan=40)
     axis_1.plot(date, bid)
     axis_1.plot(date, ask)
+    mpl_pyplot.gca().get_yaxis().get_major_formatter().set_useOffset(False)
     axis_1.xaxis.set_major_formatter(mpl_dates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+    for label in axis_1.xaxis.get_ticklabels():
+        label.set_rotation(45)
+    axis_2 = axis_1.twinx()
+    axis_2.fill_between(date, 0, (ask-bid), facecolor='g', alpha=0.3)
+    mpl_pyplot.subplots_adjust(bottom=0.23)
     mpl_pyplot.grid(True)
     mpl_pyplot.show()
 

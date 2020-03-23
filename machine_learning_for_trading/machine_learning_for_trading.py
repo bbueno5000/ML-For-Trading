@@ -21,6 +21,7 @@ class MachineLearningForTrading:
                                                       unpack=True,
                                                       delimiter=',',
                                                       converters={0:self.converter})
+        self.average_line = (self.bid+self.ask)/2
         self.pattern_array = []
         self.performance_array = []
 
@@ -48,29 +49,64 @@ class MachineLearningForTrading:
         mpl_pyplot.subplots_adjust(bottom=0.23)
         mpl_pyplot.grid(True)
         mpl_pyplot.show()
+    
+    def pattern_recognition(self):
+        """
+        DOCSTRING
+        """
+        recognition_pattern = []
+        current_pattern_1 = self.percent_change(self.average_line[-11], self.average_line[-10])
+        current_pattern_2 = self.percent_change(self.average_line[-11], self.average_line[-9])
+        current_pattern_3 = self.percent_change(self.average_line[-11], self.average_line[-8])
+        current_pattern_4 = self.percent_change(self.average_line[-11], self.average_line[-7])
+        current_pattern_5 = self.percent_change(self.average_line[-11], self.average_line[-6])
+        current_pattern_6 = self.percent_change(self.average_line[-11], self.average_line[-5])
+        current_pattern_7 = self.percent_change(self.average_line[-11], self.average_line[-4])
+        current_pattern_8 = self.percent_change(self.average_line[-11], self.average_line[-3])
+        current_pattern_9 = self.percent_change(self.average_line[-11], self.average_line[-2])
+        current_pattern_10 = self.percent_change(self.average_line[-11], self.average_line[-1])
+        recognition_pattern.append(current_pattern_1)
+        recognition_pattern.append(current_pattern_2)
+        recognition_pattern.append(current_pattern_3)
+        recognition_pattern.append(current_pattern_4)
+        recognition_pattern.append(current_pattern_5)
+        recognition_pattern.append(current_pattern_6)
+        recognition_pattern.append(current_pattern_7)
+        recognition_pattern.append(current_pattern_8)
+        recognition_pattern.append(current_pattern_9)
+        recognition_pattern.append(current_pattern_10)
 
     def pattern_storage(self):
         """
         DOCSTRING
         """
         start_time = time.time()
-        average_line = (self.bid+self.ask)/2
-        variable_x = len(average_line)-30
+        variable_x = len(self.average_line)-30
         variable_y = 11
         while variable_y < variable_x:
             pattern = []
-            point_1 = self.percent_change(average_line[variable_y-10], average_line[variable_y-9])
-            point_2 = self.percent_change(average_line[variable_y-10], average_line[variable_y-8])
-            point_3 = self.percent_change(average_line[variable_y-10], average_line[variable_y-7])
-            point_4 = self.percent_change(average_line[variable_y-10], average_line[variable_y-6])
-            point_5 = self.percent_change(average_line[variable_y-10], average_line[variable_y-5])
-            point_6 = self.percent_change(average_line[variable_y-10], average_line[variable_y-4])
-            point_7 = self.percent_change(average_line[variable_y-10], average_line[variable_y-3])
-            point_8 = self.percent_change(average_line[variable_y-10], average_line[variable_y-2])
-            point_9 = self.percent_change(average_line[variable_y-10], average_line[variable_y-1])
-            point_10 = self.percent_change(average_line[variable_y-10], average_line[variable_y])
-            outcome_range = average_line[variable_y+20:variable_y+30]
-            current_point = average_line[variable_y]
+            point_1 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-9])
+            point_2 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-8])
+            point_3 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-7])
+            point_4 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-6])
+            point_5 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-5])
+            point_6 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-4])
+            point_7 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-3])
+            point_8 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-2])
+            point_9 = self.percent_change(self.average_line[variable_y-10],
+                                          self.average_line[variable_y-1])
+            point_10 = self.percent_change(self.average_line[variable_y-10],
+                                           self.average_line[variable_y])
+            outcome_range = self.average_line[variable_y+20:variable_y+30]
+            current_point = self.average_line[variable_y]
             try:
                 average_outcome = functools.reduce(lambda x, y: variable_x+y, outcome_range/len(outcome_range))
             except Exception as exception:
@@ -100,4 +136,4 @@ class MachineLearningForTrading:
         return ((float(current)-start)/abs(start))*100.0
 
 if __name__ == '__main__':
-    MachineLearningForTrading().pattern_storage()
+    MachineLearningForTrading().pattern_recognition()

@@ -1,7 +1,10 @@
 """
 DOCSTRING
 """
+# standard imports
 import functools
+import time
+# non-standard imports
 import matplotlib.dates as mpl_dates
 import matplotlib.pyplot as mpl_pyplot
 import numpy
@@ -18,6 +21,9 @@ class MachineLearningForTrading:
                                                       unpack=True,
                                                       delimiter=',',
                                                       converters={0:self.converter})
+        self.pattern_array = []
+        self.performance_array = []
+
 
     def converter(self, date_bytes):
         """
@@ -43,14 +49,16 @@ class MachineLearningForTrading:
         mpl_pyplot.grid(True)
         mpl_pyplot.show()
 
-    def pattern_finder(self):
+    def pattern_storage(self):
         """
         DOCSTRING
         """
+        start_time = time.time()
         average_line = (self.bid+self.ask)/2
         variable_x = len(average_line)-30
         variable_y = 11
         while variable_y < variable_x:
+            pattern = []
             point_1 = self.percent_change(average_line[variable_y-10], average_line[variable_y-9])
             point_2 = self.percent_change(average_line[variable_y-10], average_line[variable_y-8])
             point_3 = self.percent_change(average_line[variable_y-10], average_line[variable_y-7])
@@ -63,18 +71,33 @@ class MachineLearningForTrading:
             point_10 = self.percent_change(average_line[variable_y-10], average_line[variable_y])
             outcome_range = average_line[variable_y+20:variable_y+30]
             current_point = average_line[variable_y]
-            print(functools.reduce(lambda x, y: variable_x+y, outcome_range/len(outcome_range)))
-            print(current_point)
-            print('___________')
-            print(point_1, point_2, point_3, point_4, point_5)
-            print(point_6, point_7, point_8, point_9, point_10)
+            try:
+                average_outcome = functools.reduce(lambda x, y: variable_x+y, outcome_range/len(outcome_range))
+            except Exception as exception:
+                print(str(exception))
+                average_outcome = 0
+            future_outcome = self.percent_change(current_point, average_outcome)
+            pattern.append(point_1)
+            pattern.append(point_2)
+            pattern.append(point_3)
+            pattern.append(point_4)
+            pattern.append(point_5)
+            pattern.append(point_6)
+            pattern.append(point_7)
+            pattern.append(point_8)
+            pattern.append(point_9)
+            pattern.append(point_10)
+            self.pattern_array.append(pattern)
+            self.performance_array.append(future_outcome)
             variable_y += 1
+        end_time = time.time()
+        print('Run Time:Pattern Storage (seconds):', end_time-start_time)
 
     def percent_change(self, start, current):
         """
         DOCSTRING
         """
-        return ((float(current)-start)/start)*100.00
+        return ((float(current)-start)/abs(start))*100.0
 
 if __name__ == '__main__':
-    MachineLearningForTrading().pattern_finder()
+    MachineLearningForTrading().pattern_storage()

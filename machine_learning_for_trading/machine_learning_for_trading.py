@@ -33,7 +33,7 @@ class MachineLearningForTrading:
         DOCSTRING
         """
         return mpl_dates.strpdate2num('%Y%m%d%H%M%S')(date_bytes.decode('ascii'))
-    
+
     def current_pattern(self):
         """
         DOCSTRING
@@ -103,6 +103,11 @@ class MachineLearningForTrading:
                 print(pattern)
                 print('----------------------------------------')
                 print('Predicted Outcome:', self.performance_array[pattern_index])
+                x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                figure = mpl_pyplot.figure()
+                mpl_pyplot.plot(x_axis, self.recognition_pattern)
+                mpl_pyplot.plot(x_axis, pattern)
+                mpl_pyplot.show()
                 print('########################################')
 
     def pattern_storage(self):
@@ -137,7 +142,8 @@ class MachineLearningForTrading:
             outcome_range = self.average_line[variable_y+20:variable_y+30]
             current_point = self.average_line[variable_y]
             try:
-                average_outcome = functools.reduce(lambda x, y: variable_x+y, outcome_range/len(outcome_range))
+                average_outcome = functools.reduce(lambda x, y: variable_x+y,
+                                                   outcome_range/len(outcome_range))
             except Exception as exception:
                 print(str(exception))
                 average_outcome = 0
@@ -165,10 +171,10 @@ class MachineLearningForTrading:
         return ((float(current)-start)/abs(start))*100.0
 
 if __name__ == '__main__':
-    ml_for_trading = MachineLearningForTrading()
-    ml_for_trading.pattern_storage()
-    ml_for_trading.current_pattern()
-    ml_for_trading.pattern_recognition()
+    ML_FOR_TRADING = MachineLearningForTrading()
+    ML_FOR_TRADING.pattern_storage()
+    ML_FOR_TRADING.current_pattern()
+    ML_FOR_TRADING.pattern_recognition()
     TOTAL_TIME = time.time()-START_TIME
     print('Run Time:Total (seconds):', TOTAL_TIME)
     

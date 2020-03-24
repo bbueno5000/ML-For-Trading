@@ -28,6 +28,18 @@ class MachineLearningForTrading:
         self.performance_array = []
         self.recognition_pattern = []
 
+    def __call__(self):
+        """
+        DOCSTRING
+        """
+        data_length = int(self.bid.shape[0])
+        for i in range(100, data_length):
+            self.average_line = self.average_line[:i]
+            self.pattern_storage()
+            self.current_pattern()
+            self.pattern_recognition()
+            input('Press any key to continue . . .')
+
     def converter(self, date_bytes):
         """
         DOCSTRING
@@ -38,9 +50,9 @@ class MachineLearningForTrading:
         """
         DOCSTRING
         """
-        for i in range(-30, 0): 
+        for i in range(-30, 0):
             self.recognition_pattern.append(
-                self.percent_change(self.average_line[-31], 
+                self.percent_change(self.average_line[-31],
                                     self.average_line[i]))
 
     def graph_raw(self):
@@ -68,9 +80,10 @@ class MachineLearningForTrading:
         for pattern in self.pattern_array:
             similarity = 0
             for i in range(30):
-                similarity += 100.0-abs(self.percent_change(pattern[i], self.recognition_pattern[i]))
+                similarity += 100.0-abs(self.percent_change(pattern[i],
+                                                            self.recognition_pattern[i]))
             similarity = similarity/30.0
-            if similarity > 30:
+            if similarity > 10:
                 pattern_index = self.pattern_array.index(pattern)
                 print('########################################')
                 print(self.recognition_pattern)
@@ -127,10 +140,7 @@ class MachineLearningForTrading:
             return 0.01
 
 if __name__ == '__main__':
-    ML_FOR_TRADING = MachineLearningForTrading()
-    ML_FOR_TRADING.pattern_storage()
-    ML_FOR_TRADING.current_pattern()
-    ML_FOR_TRADING.pattern_recognition()
+    MachineLearningForTrading()()
     TOTAL_TIME = time.time()-START_TIME
     print('Run Time:Total (seconds):', TOTAL_TIME)
     

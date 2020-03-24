@@ -38,26 +38,10 @@ class MachineLearningForTrading:
         """
         DOCSTRING
         """
-        current_pattern_1 = self.percent_change(self.average_line[-11], self.average_line[-10])
-        current_pattern_2 = self.percent_change(self.average_line[-11], self.average_line[-9])
-        current_pattern_3 = self.percent_change(self.average_line[-11], self.average_line[-8])
-        current_pattern_4 = self.percent_change(self.average_line[-11], self.average_line[-7])
-        current_pattern_5 = self.percent_change(self.average_line[-11], self.average_line[-6])
-        current_pattern_6 = self.percent_change(self.average_line[-11], self.average_line[-5])
-        current_pattern_7 = self.percent_change(self.average_line[-11], self.average_line[-4])
-        current_pattern_8 = self.percent_change(self.average_line[-11], self.average_line[-3])
-        current_pattern_9 = self.percent_change(self.average_line[-11], self.average_line[-2])
-        current_pattern_10 = self.percent_change(self.average_line[-11], self.average_line[-1])
-        self.recognition_pattern.append(current_pattern_1)
-        self.recognition_pattern.append(current_pattern_2)
-        self.recognition_pattern.append(current_pattern_3)
-        self.recognition_pattern.append(current_pattern_4)
-        self.recognition_pattern.append(current_pattern_5)
-        self.recognition_pattern.append(current_pattern_6)
-        self.recognition_pattern.append(current_pattern_7)
-        self.recognition_pattern.append(current_pattern_8)
-        self.recognition_pattern.append(current_pattern_9)
-        self.recognition_pattern.append(current_pattern_10)
+        for i in range(-30, 0): 
+            self.recognition_pattern.append(
+                self.percent_change(self.average_line[-31], 
+                                    self.average_line[i]))
 
     def graph_raw(self):
         """
@@ -82,20 +66,11 @@ class MachineLearningForTrading:
         DOCSTRING
         """
         for pattern in self.pattern_array:
-            similarity_1 = 100.0-abs(self.percent_change(pattern[0], self.recognition_pattern[0]))
-            similarity_2 = 100.0-abs(self.percent_change(pattern[1], self.recognition_pattern[1]))
-            similarity_3 = 100.0-abs(self.percent_change(pattern[2], self.recognition_pattern[2]))
-            similarity_4 = 100.0-abs(self.percent_change(pattern[3], self.recognition_pattern[3]))
-            similarity_5 = 100.0-abs(self.percent_change(pattern[4], self.recognition_pattern[4]))
-            similarity_6 = 100.0-abs(self.percent_change(pattern[5], self.recognition_pattern[5]))
-            similarity_7 = 100.0-abs(self.percent_change(pattern[6], self.recognition_pattern[6]))
-            similarity_8 = 100.0-abs(self.percent_change(pattern[7], self.recognition_pattern[7]))
-            similarity_9 = 100.0-abs(self.percent_change(pattern[8], self.recognition_pattern[8]))
-            similarity_10 = 100.0-abs(self.percent_change(pattern[9], self.recognition_pattern[9]))
-            similarity = similarity_1 + similarity_2 + similarity_3 + similarity_4 + similarity_5
-            similarity = similarity_6 + similarity_7 + similarity_8 + similarity_9 + similarity_10
-            similarity = similarity / 10.0
-            if similarity > 70:
+            similarity = 0
+            for i in range(30):
+                similarity += 100.0-abs(self.percent_change(pattern[i], self.recognition_pattern[i]))
+            similarity = similarity/30.0
+            if similarity > 30:
                 pattern_index = self.pattern_array.index(pattern)
                 print('########################################')
                 print(self.recognition_pattern)
@@ -103,7 +78,7 @@ class MachineLearningForTrading:
                 print(pattern)
                 print('----------------------------------------')
                 print('Predicted Outcome:', self.performance_array[pattern_index])
-                x_axis = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                x_axis = list(range(0, 30))
                 figure = mpl_pyplot.figure()
                 mpl_pyplot.plot(x_axis, self.recognition_pattern)
                 mpl_pyplot.plot(x_axis, pattern)
@@ -115,30 +90,14 @@ class MachineLearningForTrading:
         DOCSTRING
         """
         start_time = time.time()
-        variable_x = len(self.average_line)-30
-        variable_y = 11
+        variable_x = len(self.average_line)-60
+        variable_y = 31
         while variable_y < variable_x:
             pattern = []
-            point_1 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-9])
-            point_2 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-8])
-            point_3 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-7])
-            point_4 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-6])
-            point_5 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-5])
-            point_6 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-4])
-            point_7 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-3])
-            point_8 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-2])
-            point_9 = self.percent_change(self.average_line[variable_y-10],
-                                          self.average_line[variable_y-1])
-            point_10 = self.percent_change(self.average_line[variable_y-10],
-                                           self.average_line[variable_y])
+            for i in range(29, -1, -1):
+                pattern.append(
+                    self.percent_change(self.average_line[variable_y-30],
+                                        self.average_line[variable_y-i]))
             outcome_range = self.average_line[variable_y+20:variable_y+30]
             current_point = self.average_line[variable_y]
             try:
@@ -148,16 +107,6 @@ class MachineLearningForTrading:
                 print(str(exception))
                 average_outcome = 0
             future_outcome = self.percent_change(current_point, average_outcome)
-            pattern.append(point_1)
-            pattern.append(point_2)
-            pattern.append(point_3)
-            pattern.append(point_4)
-            pattern.append(point_5)
-            pattern.append(point_6)
-            pattern.append(point_7)
-            pattern.append(point_8)
-            pattern.append(point_9)
-            pattern.append(point_10)
             self.pattern_array.append(pattern)
             self.performance_array.append(future_outcome)
             variable_y += 1
@@ -168,7 +117,14 @@ class MachineLearningForTrading:
         """
         DOCSTRING
         """
-        return ((float(current)-start)/abs(start))*100.0
+        try:
+            variable_x = ((float(current)-start)/abs(start))*100.0
+            if variable_x == 0.0:
+                return 0.01
+            else:
+                return variable_x
+        except:
+            return 0.01
 
 if __name__ == '__main__':
     ML_FOR_TRADING = MachineLearningForTrading()

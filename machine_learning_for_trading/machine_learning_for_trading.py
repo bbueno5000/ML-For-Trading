@@ -33,7 +33,7 @@ class MachineLearningForTrading:
         DOCSTRING
         """
         data_length = int(self.bid.shape[0])
-        for i in range(100, data_length):
+        for i in range(37000, data_length):
             self.average_line = self.average_line[:i]
             self.pattern_storage()
             self.current_pattern()
@@ -77,26 +77,26 @@ class MachineLearningForTrading:
         """
         DOCSTRING
         """
+        pattern_found = False
+        plot_pattern_array = []
+        x_axis = list(range(0, 30))
         for pattern in self.pattern_array:
             similarity = 0
             for i in range(30):
-                similarity += 100.0-abs(self.percent_change(pattern[i],
+                similarity += 100.0-abs(self.percent_change(pattern[i], 
                                                             self.recognition_pattern[i]))
             similarity = similarity/30.0
-            if similarity > 10:
-                pattern_index = self.pattern_array.index(pattern)
-                print('########################################')
-                print(self.recognition_pattern)
-                print('========================================')
-                print(pattern)
-                print('----------------------------------------')
-                print('Predicted Outcome:', self.performance_array[pattern_index])
-                x_axis = list(range(0, 30))
-                figure = mpl_pyplot.figure()
-                mpl_pyplot.plot(x_axis, self.recognition_pattern)
+            if similarity > 50:
+                pattern_found = True
+                plot_pattern_array.append(pattern)
+        if pattern_found:
+            figure = mpl_pyplot.figure(figsize=(10, 6))
+            for pattern in plot_pattern_array:
                 mpl_pyplot.plot(x_axis, pattern)
-                mpl_pyplot.show()
-                print('########################################')
+            mpl_pyplot.plot(x_axis, self.recognition_pattern, '#54FFF7', linewidth=3)
+            mpl_pyplot.grid(True)
+            mpl_pyplot.title('Pattern Recognition')
+            mpl_pyplot.show()
 
     def pattern_storage(self):
         """

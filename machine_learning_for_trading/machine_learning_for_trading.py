@@ -92,7 +92,16 @@ class MachineLearningForTrading:
         if pattern_found:
             figure = mpl_pyplot.figure(figsize=(10, 6))
             for pattern in plot_pattern_array:
+                future_points = self.pattern_array.index(pattern)
+                if self.performance_array[future_points] > self.recognition_pattern[29]:
+                    point_color = '#24BC00'
+                else:
+                    point_color = '#D40000'
                 mpl_pyplot.plot(x_axis, pattern)
+                mpl_pyplot.scatter(35, 
+                                   self.performance_array[future_points], 
+                                   c=point_color, 
+                                   alpha=0.3)
             mpl_pyplot.plot(x_axis, self.recognition_pattern, '#54FFF7', linewidth=3)
             mpl_pyplot.grid(True)
             mpl_pyplot.title('Pattern Recognition')

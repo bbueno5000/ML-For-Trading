@@ -23,17 +23,21 @@ class MachineLearningForTrading:
                                                       unpack=True,
                                                       delimiter=',',
                                                       converters={0:self.converter})
-        self.average_line = (self.bid+self.ask)/2
+        self.all_data = (self.bid+self.ask)/2
+        self.to_what = 37000
+        self.average_line = self.all_data[:self.to_what]
         self.pattern_array = []
         self.performance_array = []
         self.recognition_pattern = []
+        self.variable_x = len(self.average_line)-60
+        self.variable_y = 31
 
     def __call__(self):
         """
         DOCSTRING
         """
         data_length = int(self.bid.shape[0])
-        for i in range(37000, data_length):
+        for i in range(self.to_what, data_length):
             self.average_line = self.average_line[:i]
             self.pattern_storage()
             self.current_pattern()
@@ -102,6 +106,11 @@ class MachineLearningForTrading:
                                    self.performance_array[future_points], 
                                    c=point_color, 
                                    alpha=0.3)
+            real_outcome_range = self.all_data[self.to_what+20:self.to_what+30]
+            real_average_outcome = functools.reduce(lambda x, y: self.variable_x+y,
+                                                    real_outcome_range/len(real_outcome_range))
+            real_movement = self.percent_change(self.all_data[self.to_what], real_average_outcome)
+            mpl_pyplot.scatter(40, real_movement, c='#54FFF7', s=25)
             mpl_pyplot.plot(x_axis, self.recognition_pattern, '#54FFF7', linewidth=3)
             mpl_pyplot.grid(True)
             mpl_pyplot.title('Pattern Recognition')
@@ -112,18 +121,16 @@ class MachineLearningForTrading:
         DOCSTRING
         """
         start_time = time.time()
-        variable_x = len(self.average_line)-60
-        variable_y = 31
-        while variable_y < variable_x:
+        while self.variable_y < self.variable_x:
             pattern = []
             for i in range(29, -1, -1):
                 pattern.append(
-                    self.percent_change(self.average_line[variable_y-30],
-                                        self.average_line[variable_y-i]))
-            outcome_range = self.average_line[variable_y+20:variable_y+30]
-            current_point = self.average_line[variable_y]
+                    self.percent_change(self.average_line[self.variable_y-30],
+                                        self.average_line[self.variable_y-i]))
+            outcome_range = self.average_line[self.variable_y+20:self.variable_y+30]
+            current_point = self.average_line[self.variable_y]
             try:
-                average_outcome = functools.reduce(lambda x, y: variable_x+y,
+                average_outcome = functools.reduce(lambda x, y: self.variable_x+y,
                                                    outcome_range/len(outcome_range))
             except Exception as exception:
                 print(str(exception))
@@ -131,7 +138,7 @@ class MachineLearningForTrading:
             future_outcome = self.percent_change(current_point, average_outcome)
             self.pattern_array.append(pattern)
             self.performance_array.append(future_outcome)
-            variable_y += 1
+            self.variable_y += 1
         end_time = time.time()
         print('Run Time:Pattern Storage (seconds):', end_time-start_time)
 

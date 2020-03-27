@@ -81,6 +81,7 @@ class MachineLearningForTrading:
         """
         DOCSTRING
         """
+        predicted_outcomes_array = []
         pattern_found = False
         plot_pattern_array = []
         x_axis = list(range(0, 30))
@@ -102,6 +103,7 @@ class MachineLearningForTrading:
                 else:
                     point_color = '#D40000'
                 mpl_pyplot.plot(x_axis, pattern)
+                predicted_outcomes_array.append(self.performance_array[future_points])
                 mpl_pyplot.scatter(35, 
                                    self.performance_array[future_points], 
                                    c=point_color, 
@@ -109,8 +111,12 @@ class MachineLearningForTrading:
             real_outcome_range = self.all_data[self.to_what+20:self.to_what+30]
             real_average_outcome = functools.reduce(lambda x, y: self.variable_x+y,
                                                     real_outcome_range/len(real_outcome_range))
+            predicted_average_outcome = functools.reduce(lambda x, y: self.variable_x+y, 
+                                                         predicted_outcomes_array/len(
+                                                             predicted_outcomes_array))
             real_movement = self.percent_change(self.all_data[self.to_what], real_average_outcome)
             mpl_pyplot.scatter(40, real_movement, c='#54FFF7', s=25)
+            mpl_pyplot.scatter(40, predicted_average_outcome, c='b', s=25)
             mpl_pyplot.plot(x_axis, self.recognition_pattern, '#54FFF7', linewidth=3)
             mpl_pyplot.grid(True)
             mpl_pyplot.title('Pattern Recognition')

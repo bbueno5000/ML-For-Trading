@@ -31,6 +31,8 @@ class MachineLearningForTrading:
         self.recognition_pattern = []
         self.variable_x = len(self.average_line)-60
         self.variable_y = 31
+        self.accuracy_array = []
+        self.samples = 0
 
     def __call__(self):
         """
@@ -43,6 +45,11 @@ class MachineLearningForTrading:
             self.current_pattern()
             self.pattern_recognition()
             input('Press any key to continue . . .')
+            self.samples += 1
+            accuracy_average = functools.reduce(lambda x, y: self.variable_x+y,
+                                                self.accuracy_array)/len(self.accuracy_array)
+            print('Backtesting Accuracy (%):', str(accuracy_average))
+            print('Number of Samples:', self.samples)
 
     def converter(self, date_bytes):
         """
@@ -88,39 +95,48 @@ class MachineLearningForTrading:
         for pattern in self.pattern_array:
             similarity = 0
             for i in range(30):
-                similarity += 100.0-abs(self.percent_change(pattern[i], 
+                similarity += 100.0-abs(self.percent_change(pattern[i],
                                                             self.recognition_pattern[i]))
             similarity = similarity/30.0
             if similarity > 50:
                 pattern_found = True
                 plot_pattern_array.append(pattern)
+        prediction_array = []
         if pattern_found:
-            figure = mpl_pyplot.figure(figsize=(10, 6))
             for pattern in plot_pattern_array:
                 future_points = self.pattern_array.index(pattern)
                 if self.performance_array[future_points] > self.recognition_pattern[29]:
                     point_color = '#24BC00'
+                    prediction_array.append(1.00)
                 else:
                     point_color = '#D40000'
-                mpl_pyplot.plot(x_axis, pattern)
+                    prediction_array.append(-1.00)
                 predicted_outcomes_array.append(self.performance_array[future_points])
-                mpl_pyplot.scatter(35, 
-                                   self.performance_array[future_points], 
-                                   c=point_color, 
-                                   alpha=0.3)
             real_outcome_range = self.all_data[self.to_what+20:self.to_what+30]
             real_average_outcome = functools.reduce(lambda x, y: self.variable_x+y,
-                                                    real_outcome_range/len(real_outcome_range))
-            predicted_average_outcome = functools.reduce(lambda x, y: self.variable_x+y, 
-                                                         predicted_outcomes_array/len(
-                                                             predicted_outcomes_array))
+                                                    real_outcome_range)/len(real_outcome_range)
+            predicted_average_outcome = functools.reduce(lambda x, y: self.variable_x+y,
+                                                         predicted_outcomes_array)/len(
+                                                             predicted_outcomes_array)
             real_movement = self.percent_change(self.all_data[self.to_what], real_average_outcome)
-            mpl_pyplot.scatter(40, real_movement, c='#54FFF7', s=25)
-            mpl_pyplot.scatter(40, predicted_average_outcome, c='b', s=25)
-            mpl_pyplot.plot(x_axis, self.recognition_pattern, '#54FFF7', linewidth=3)
-            mpl_pyplot.grid(True)
-            mpl_pyplot.title('Pattern Recognition')
-            mpl_pyplot.show()
+            prediction_average = functools.reduce(lambda x, y: self.variable_x+y,
+                                                  prediction_array)/len(prediction_array)
+            if prediction_average < 0:
+                print('Drop Predicted')
+                print(self.recognition_pattern[29])
+                print(real_movement)
+                if real_movement < self.recognition_pattern[29]:
+                    self.accuracy_array.append(100.00)
+                else:
+                    self.accuracy_array.append(0.00)
+            if prediction_average > 0:
+                print('Rise Predicted')
+                print(self.recognition_pattern[29])
+                print(real_movement)
+                if real_movement > self.recognition_pattern[29]:
+                    self.accuracy_array.append(100.00)
+                else:
+                    self.accuracy_array.append(0.00)
 
     def pattern_storage(self):
         """
